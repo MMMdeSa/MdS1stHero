@@ -185,14 +185,26 @@
       filter: sepia(.77) saturate(.55) contrast(.91) brightness(1.04);
     }
 
+    /* Fine-tuning individual archival portraits */
     .portrait-picture img[src$="du-bois-portrait.jpg"] {
-      transform: scale(1.26);
+      transform: scale(1.27);
     }
 
     .portrait-picture img[src$="booth-portrait.jpg"] {
-      transform: scale(1.12);
+      transform: scale(1.15);
     }
 
+    .portrait-picture img[src$="minard-signature.png"] {
+      max-width: 225px;
+      max-height: 100px;
+      filter: sepia(.72) saturate(.5) contrast(.88);
+    }
+
+    .portrait-picture img[src$="schutz-signature.png"] {
+      max-width: 150px;
+      max-height: 43px;
+      filter: sepia(.58) saturate(.55) contrast(.93);
+    }
     .portrait-card figcaption {
       margin-top: 12px;
       font-size: clamp(15px, 1.12vw, 18px);
