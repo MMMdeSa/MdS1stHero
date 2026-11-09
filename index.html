@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mario's interest's seen through a small gallery of data visualisations with social impact.">
+  <title>Mario: data, design and society</title>
+  <style>
+    /* 1. Restrained, print-inspired palette. */
+    :root {
+      --paper: #f1e9d9;
+      --paper-deep: #e9ddc9;
+      --ink: #342b27;
+      --muted: #796d61;
+      --accent: #8a5547;
+      --rule: #b9aa96;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Georgia, 'Times New Roman', serif;
+      /* Fine vertical lines suggestive if old paper. */
+      background-image: repeating-linear-gradient(
+        90deg, transparent 0, transparent 3px,
+        rgba(70, 48, 33, 0.012) 4px, transparent 5px
+      );
+    }
+
+    .page {
+      width: min(1200px, calc(100% - 64px));
+      margin: 0 auto;
+    }
+
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 31px 0 17px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 11px;
+      letter-spacing: .19em;
+      text-transform: uppercase;
+    }
+
+    .masthead .mark { font-weight: bold; letter-spacing: .11em; }
+    .masthead .edition { color: var(--muted); text-align: right; }
+
+    /* 2. Two-column layout on large screens. */
+    .hero {
+      min-height: min(760px, calc(100svh - 82px));
+      display: grid;
+      grid-template-columns: minmax(290px, .83fr) minmax(0, 1.17fr);
+      align-items: center;
+      gap: clamp(35px, 5vw, 85px);
+      padding: 56px 0 62px;
+    }
+
+    .intro { align-self: start; }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 34px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      margin: 28px 0 16px;
+      font-size: clamp(25px, 3vw, 50px);
+      font-weight: normal;
+      letter-spacing: -.075em;
+      line-height: 1;
+    }
+
+    h1 .punctuation { color: var(--accent); }
+
+    .intro-line {
+      max-width: 500px;
+      margin: 0;
+      font-size: clamp(15px, 1.5vw, 20px);
+      line-height: 1.55;
+      letter-spacing: -.018em;
+    }
+
+  .intro-note {
+    max-width: none;
+    margin: 36px 0 0;
+    padding-top: 34px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+    .gallery { margin: 0; min-width: 0; }
+
+    .gallery-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 0 14px;
+      font-size: 16px;
+      font-style: italic;
+      letter-spacing: .16em;
+      color: var(--muted);
+    }
+
+    .gallery-number { font-variant-numeric: tabular-nums; }
+
+    .gallery-art {
+      position: relative;
+      overflow: hidden;
+      height: clamp(340px, 43vw, 510px);
+      background: #e7dcc9;
+      border: 1px solid #d0c3b0;
+      box-shadow: 0 19px 36px -29px rgba(65, 47, 33, .45), 0 2px 8px rgba(65, 47, 33, .09);
+    }
+
+    .gallery-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 35px rgba(89, 61, 34, .085);
+    }
+
+    /* 3. Link to original collection. */
+    .artwork-link {
+      position: absolute;
+      inset: 0;
+      display: block;
+      z-index: 1;
+    }
+
+    /* Overlap; changing opacity cross-fade. */
+    .gallery-art img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 17px;
+      object-fit: contain;  /* Keep labels and axes intact not to crop chart. */
+      opacity: 0;
+      transition: opacity 1100ms ease;
+      filter: sepia(.075) saturate(.91) contrast(.975);
+      background: #e7dcc9;
+    }
+
+    .gallery-art img.is-visible { opacity: 1; }
+
+    .image-fallback {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      font-style: italic;
+      color: var(--muted);
+      background: var(--paper-deep);
+    }
+
+    .image-fallback[hidden] { display: none; }
+    .image-fallback a { color: var(--accent); }
+
+    .gallery-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 18px;
+      min-height: 115px;
+      padding-top: 20px;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 19px;
+    }
+
+    .artwork-title a { color: inherit; text-decoration: none; }
+    .artwork-title a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+    .artwork-title {
+      margin: 0 0 5px;
+      font-size: clamp(17px, 1.6vw, 21px);
+      font-weight: normal;
+      line-height: 1.3;
+    }
+
+    .artwork-credit {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    .artwork-credit a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .controls { display: flex; align-items: center; gap: 6px; }
+
+    button {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      border: 1px solid var(--rule);
+      background: transparent;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 17px;
+      border-radius: 50%;
+      transition: background-color .2s ease;
+    }
+
+    button:hover { background: #e2d4c2; }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    button#toggle { width: 42px; height: 42px; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 15px 0 26px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    footer p { margin: 0; }
+
+    @media (max-width: 790px) {
+      .page { width: min(620px, calc(100% - 36px)); }
+      .masthead { padding-top: 22px; }
+      .hero { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding: 58px 0 30px; }
+      h1 { font-size: clamp(68px, 16vw, 100px); margin-top: 18px; }
+      .intro-line { max-width: 570px; }
+      .intro-note { margin-top: 25px; }
+      .intro-note {white-space: normal; }
+      .gallery-art { height: clamp(290px, 73vw, 480px); }
+      footer { flex-direction: column; gap: 6px; }
+    }
+
+    @media (max-width: 420px) {
+      .gallery-bottom { grid-template-columns: 1fr; gap: 16px; }
+      .controls { justify-self: start; }
+      .gallery-art img { padding: 10px; }
+    }
+
+    /* Accommodate OS disabled motion. */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .gallery-art img { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <span class="mark">M / Visual enquiries</span>
+      
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="intro-heading">
+        <div class="intro">
+          
+          <h1 id="intro-heading">Mário, Brussels<span class="punctuation">:</span></h1>
+          <p class="intro-line">Generalist from a non-scientific background, <br> chasing data design choices with a lasting social impact</p>
+          <p class="intro-note">Images that changed what you could see — and how you saw it.</p>
+        </div>
+
+        <figure class="gallery" aria-label="Gallery of influential data visualisations">
+          <div class="gallery-header">
+            <span>Visual histories of evidence, passion and imagination</span>
+            <span class="gallery-number" id="counter">01 / 09</span>
+          </div>
+
+          <div class="gallery-art">
+            <!-- Artwork surface clickable link to its original record. -->
+            <a class="artwork-link" id="artwork-link"
+               href="https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg"
+               target="_blank" rel="noopener noreferrer"
+               aria-label="View John Snow’s cholera map and its source information">
+              <!-- First image is visible even if JavaScript is switched off. -->
+              <img id="image-one" class="is-visible"
+                   src="images/snow-cholera-1855.jpg"
+                   alt="John Snow’s map of the 1854 cholera outbreak, published in 1855">
+              <img id="image-two" alt="" aria-hidden="true">
+            </a>
+            <div class="image-fallback" id="image-fallback" hidden>
+              <p>Image unavailable. <a id="fallback-link" href="https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg" target="_blank" rel="noopener noreferrer">View the original at its source ↗</a></p>
+            </div>
+          </div>
+
+          <figcaption class="gallery-bottom">
+            <div>
+              <h2 class="artwork-title"><a id="art-title" href="https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg" target="_blank" rel="noopener noreferrer">Cholera deaths around Broad Street</a></h2>
+              <p class="artwork-credit">
+                <span id="art-credit">John Snow · 1855 · Wikimedia Commons</span>
+                <span aria-hidden="true"> · </span>
+                <a id="art-source" href="https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg" target="_blank" rel="noopener noreferrer">View original ↗</a>
+                <span aria-hidden="true"> · </span>
+                <a id="art-rights" href="https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg#Licensing" target="_blank" rel="noopener noreferrer">Public domain ↗</a>
+              </p>
+            </div>
+            <nav class="controls" aria-label="Gallery controls">
+              <button id="previous" type="button" aria-label="Previous image" title="Previous image">&#8592;</button>
+              <button id="toggle" type="button" aria-label="Pause slideshow" title="Pause slideshow">&#10074;&#10074;</button>
+              <button id="next" type="button" aria-label="Next image" title="Next image">&#8594;</button>
+            </nav>
+          </figcaption>
+        </figure>
+      </section>
+    </main>
+
+    <footer>
+      <p></p>
+      <p>Image credits, rights and original-source links accompany each work.</p>
+    </footer>
+  </div>
+
+  <script>
+    // 4. Nine slides in chronological order by date of graphic.
+    //    One object = one illustration.
+    //    Source and rights links point to original institutions, offline copies retrieved for webpage operation.
+    const slides = [
+      {
+        title: "Cholera deaths around Broad Street",
+        creator: "John Snow", year: "1855", collection: "Wikimedia Commons",
+        image: "images/snow-cholera-1855.jpg",
+        alt: "John Snow's map of the 1854 cholera outbreak, published in 1855, marking deaths and water pumps in Soho, London",
+        source: "https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg",
+        rights: "Public domain", license: "https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg#Licensing"
+      },
+      {
+        title: "Causes of mortality in the Army in the East",
+        creator: "Florence Nightingale", year: "1858", collection: "Wikimedia Commons",
+        image: "images/nightingale-mortality-1858.jpg",
+        alt: "Florence Nightingale's paired polar-area diagrams of causes of death during the Crimean War",
+        source: "https://commons.wikimedia.org/wiki/File:Nightingale-mortality.jpg",
+        rights: "Public domain", license: "https://commons.wikimedia.org/wiki/File:Nightingale-mortality.jpg#Licensing"
+      },
+      {
+        title: "Map of successive losses in Napoleon's Russian campaign",
+        creator: "Charles Joseph Minard", year: "1869", collection: "Wikimedia Commons",
+        image: "images/minard-russian-campaign-1869.png",
+        alt: "Minard's flow map tracing Napoleon's diminishing army during the 1812 Russian campaign, showing the retreat and temperatures",
+        source: "https://commons.wikimedia.org/wiki/File:Minard.png",
+        rights: "Public domain", license: "https://commons.wikimedia.org/wiki/File:Minard.png#Licensing"
+      },
+      {
+        title: "Descriptive Map of London Poverty",
+        creator: "Charles Booth and collaborators", year: "1889", collection: "Wellcome Collection",
+        image: "images/booth-london-poverty-1889.jpg",
+        alt: "Booth's colour-coded map of London streets according to nineteenth-century poverty classifications",
+        source: "https://commons.wikimedia.org/wiki/File:Descriptive_map_of_London_poverty,_1889_Wellcome_L0074437.jpg",
+        rights: "CC BY 4.0", license: "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        title: "Professions of Atlanta University graduates",
+        creator: "Atlanta University students / W. E. B. Du Bois (collector)", year: "1900", collection: "Library of Congress",
+        image: "images/du-bois-atlanta-graduates-1900.jpg",
+        alt: "Bilingual 1900 statistical chart with a large red-and-yellow pie diagram showing professions of Atlanta University graduates",
+        source: "https://www.loc.gov/item/2005676836/",
+        rights: "No known restrictions", license: "https://www.loc.gov/item/2005676836/"
+      },
+      {
+        title: "Consommation annuelle de l'eau-de-vie à 50°",
+        creator: "V. Schütz (design); after Dr Koller (statistics)", year: "1929", collection: "NLM historical reference",
+        image: "images/schutz-koller-1929.jpg",
+        alt: "Swiss colour lithograph using bottles and coins to compare spirits consumption and taxation among five European countries",
+        source: "https://circulatingnow.nlm.nih.gov/2023/07/13/revealing-data-visualizations-in-historical-collections/",
+        rights: "NLM rights information", license: "https://www.nlm.nih.gov/hmd/copyright/patron-guide.html"
+      },
+      {
+        title: "This is Ann… she drinks your blood!",
+        creator: "Theodor Geisel (illustration) / Munro Leaf (text)", year: "1943", collection: "U.S. War Department",
+        image: "images/ann-malaria-1943.jpg",
+        alt: "1943 American malaria awareness poster featuring a mosquito character and red-shaded map of global malaria distribution",
+        source: "https://commons.wikimedia.org/wiki/File:This_is_Ann..._she_drinks_your_blood!.jpg",
+        rights: "U.S. public domain", license: "https://commons.wikimedia.org/wiki/File:This_is_Ann..._she_drinks_your_blood!.jpg#Licensing"
+      },
+      {
+        title: "Life expectancy and income: Gapminder bubbles",
+        creator: "Gapminder Foundation", year: "2023", collection: "Wikimedia Commons",
+        image: "images/gapminder-bubbles-2023.png",
+        alt: "Gapminder's bubbles visualisation comparing countries' income and life expectancy, with bubble area for population, showing the year 2022",
+        source: "https://commons.wikimedia.org/wiki/File:Gapminder_sample.png",
+        rights: "CC BY 4.0", license: "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        title: "Global warming stripes, 1850–2025",
+        creator: "Ed Hawkins", year: "2026", collection: "University of Reading",
+        image: "images/hawkins-warming-stripes-2026.png",
+        alt: "Horizontal sequence of annual warming stripes from blues in earlier decades to reds in recent decades, depicting 1850–2025",
+        source: "https://commons.wikimedia.org/wiki/File:GLOBAL-STRIPES-1850-2025-hires.png",
+        rights: "CC BY 4.0", license: "https://creativecommons.org/licenses/by/4.0/"
+      }
+    ];
+
+    // 5. Keep track of which slide is displayed.
+    const images = [document.querySelector("#image-one"), document.querySelector("#image-two")];
+    const counter = document.querySelector("#counter");
+    const title = document.querySelector("#art-title");
+    const artworkLink = document.querySelector("#artwork-link");
+    const fallbackLink = document.querySelector("#fallback-link");
+    const credit = document.querySelector("#art-credit");
+    const source = document.querySelector("#art-source");
+    const rights = document.querySelector("#art-rights");
+    const fallback = document.querySelector("#image-fallback");
+    const toggle = document.querySelector("#toggle");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let slideIndex = 0;
+    let visibleImage = 0;
+    let loadingRequest = 0;
+    let intervalId = null;
+
+    function updateCaption(slide) {
+      title.textContent = slide.title;
+      title.href = slide.source;
+      credit.textContent = `${slide.creator} · ${slide.year} · ${slide.collection}`;
+      source.href = slide.source;
+      rights.href = slide.license;
+      rights.textContent = `${slide.rights} ↗`;
+      artworkLink.href = slide.source;
+      artworkLink.setAttribute("aria-label", `View original: ${slide.title}`);
+      fallbackLink.href = slide.source;
+      counter.textContent = `${String(slideIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+    }
+
+    // 6. Load new image, then cross-fade.
+    function showSlide(nextIndex) {
+      slideIndex = (nextIndex + slides.length) % slides.length;
+      const slide = slides[slideIndex];
+      const request = ++loadingRequest;
+      const incomingIndex = 1 - visibleImage;
+      const incoming = images[incomingIndex];
+      const outgoing = images[visibleImage];
+
+      fallback.hidden = true;
+
+      incoming.onload = () => {
+        if (request !== loadingRequest) return; // Ignore an old, slow image load.
+        incoming.classList.add("is-visible");
+        incoming.setAttribute("aria-hidden", "false");
+        outgoing.classList.remove("is-visible");
+        outgoing.setAttribute("aria-hidden", "true");
+        visibleImage = incomingIndex;
+        updateCaption(slide);
+      };
+      incoming.onerror = () => {
+        if (request !== loadingRequest) return;
+        fallback.hidden = false;
+        updateCaption(slide);
+      };
+      incoming.alt = slide.alt;
+      incoming.src = slide.image;
+    }
+
+    // 7. Automatic rotation at setInterval; visitors can pause.
+    function startSlideshow() {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => showSlide(slideIndex + 1), 6500);
+      toggle.innerHTML = "&#10074;&#10074;";
+      toggle.setAttribute("aria-label", "Pause slideshow");
+      toggle.title = "Pause slideshow";
+    }
+
+    function pauseSlideshow() {
+      clearInterval(intervalId);
+      intervalId = null;
+      toggle.innerHTML = "&#9654;";
+      toggle.setAttribute("aria-label", "Play slideshow");
+      toggle.title = "Play slideshow";
+    }
+
+    document.querySelector("#previous").addEventListener("click", () => showSlide(slideIndex - 1));
+    document.querySelector("#next").addEventListener("click", () => showSlide(slideIndex + 1));
+    toggle.addEventListener("click", () => intervalId === null ? startSlideshow() : pauseSlideshow());
+
+    
+    if (prefersReducedMotion) pauseSlideshow();
+    else startSlideshow();
+  </script>
+</body>
+</html>
