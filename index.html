@@ -62,7 +62,7 @@
       padding: 56px 0 62px;
     }
 
-    /* Keep the name at the top, portrait in the centre, motto lower down. */
+    /* Keep name atop, portrait centre, motto lower down. */
     .intro {
       align-self: stretch;
       display: flex;
@@ -89,7 +89,7 @@
 
     h1 {
       margin: 28px 0 16px;
-      font-size: clamp(25px, 3vw, 50px);
+      font-size: clamp(20px, 2vw, 35px);
       font-weight: normal;
       letter-spacing: -.075em;
       line-height: 1;
@@ -103,9 +103,10 @@
       font-size: clamp(15px, 1.5vw, 20px);
       line-height: 1.55;
       letter-spacing: -.018em;
+      font-style: italic;
     }
 
-    /* A portrait and its companion artwork always change together. */
+    /*Portrait and companion artwork change together. */
     .portrait-stage {
       position: relative;
       flex: 1 1 auto;
@@ -204,7 +205,7 @@
       font-style: italic;
     }
 
-    /* Only the Geisel / Leaf slide displays two slightly overlapping ovals. */
+    /* Geisel - Leaf slide displays slightly overlapping ovals. */
     .portrait-group--duo .portrait-card { z-index: 1; }
     .portrait-group--duo .portrait-card:first-child { z-index: 2; }
     .portrait-group--duo .portrait-card + .portrait-card { margin-left: -25px; }
@@ -213,7 +214,7 @@
       height: clamp(210px, 15vw, 257px);
     }
 
-    /* Signatures stand alone; never attach a signature to someone else's image. */
+    
     .portrait-card--signature .portrait-picture {
       width: clamp(215px, 19vw, 290px);
       height: 186px;
@@ -229,7 +230,7 @@
       border-radius: 0;
       filter: sepia(.6) saturate(.5) contrast(.83);
     }
-    /* The lithographic detail is tiny: keep it smaller than its natural size. */
+    
     .portrait-card--schutz .portrait-picture img {
       max-width: 156px;
       max-height: 45px;
@@ -253,8 +254,7 @@
 
     .gallery { min-width: 0; }
 
-    /* Artwork and caption become a single, softly raised archival mount.
-       Its inner artwork recess complements the raised oval portraits. */
+
     .gallery-mount {
       margin: 0;
       padding: 16px 16px 0;
@@ -348,7 +348,6 @@
       gap: 18px;
       min-height: 104px;
       padding: 20px 6px 22px;
-      /* No separate caption underline: it belongs inside the mount. */
       border: 0;
       background: transparent;
     }
@@ -469,7 +468,7 @@
         <div class="intro">
           
           <h1 id="intro-heading">Mário, Brussels<span class="punctuation">:</span></h1>
-          <p class="intro-line">Generalist from a non-scientific background, <br> chasing data design choices with a lasting social impact</p>
+          <p class="intro-line">Generalist with a non-scientific background <br> Chasing data design choices with a lasting social impact</p>
           <!-- Present even without JavaScript; other portraits are created from the slides array. -->
           <div class="portrait-stage" aria-label="Person associated with the current visualisation">
             <div id="portrait-one" class="portrait-layer is-visible" aria-hidden="false">
@@ -642,7 +641,7 @@
       }
     ];
 
-    // 5. Keep track of which slide is displayed.
+    // 5. Slide tracking.
     const images = [document.querySelector("#image-one"), document.querySelector("#image-two")];
     const portraitLayers = [document.querySelector("#portrait-one"), document.querySelector("#portrait-two")];
     const counter = document.querySelector("#counter");
@@ -674,8 +673,7 @@
       counter.textContent = `${String(slideIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
     }
 
-    // One linked oval (or signature), or two smaller linked ovals for collaborators.
-    // The visible names are links as well: no separate "Wikipedia" labels.
+    // One linked oval (or signature), two smaller linked ovals for collaborators.
     function renderPortraits(slide, layer) {
       const group = document.createElement("div");
       group.className = slide.portraits.length === 2 ? "portrait-group portrait-group--duo" : "portrait-group";
