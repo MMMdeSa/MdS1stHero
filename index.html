@@ -62,7 +62,13 @@
       padding: 56px 0 62px;
     }
 
-    .intro { align-self: start; }
+    /* Keep the name at the top, portrait in the centre, motto lower down. */
+    .intro {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
 
     .eyebrow {
       display: flex;
@@ -99,20 +105,167 @@
       letter-spacing: -.018em;
     }
 
-  .intro-note {
-    max-width: none;
-    margin: 36px 0 0;
-    padding-top: 34px;
-    border-top: 1px solid var(--rule);
-    color: var(--muted);
-    font-family: 'Times New Roman', Georgia, serif;
-    font-size: 18px;
-    font-style: italic;
-    line-height: 1.5;
-    white-space: nowrap;
-  }
+    /* A portrait and its companion artwork always change together. */
+    .portrait-stage {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 350px;
+      margin-top: 25px;
+      isolation: isolate;
+    }
 
-    .gallery { margin: 0; min-width: 0; }
+    .portrait-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1100ms ease;
+    }
+
+    .portrait-layer.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .portrait-group {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .portrait-card {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      text-align: center;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .portrait-picture {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(185px, 15vw, 245px);
+      height: clamp(236px, 18vw, 285px);
+      max-width: 100%;
+      overflow: hidden;
+      border-radius: 50%;
+      padding: 5px;
+      border: 1px solid #aa8f70;
+      background: #e1cfb3;
+      box-shadow:
+        0 0 0 2px rgba(251, 243, 226, .85),
+        0 0 0 4px rgba(143, 111, 79, .28),
+        inset 2px 2px 3px rgba(255, 255, 255, .9),
+        inset -2px -2px 4px rgba(96, 65, 42, .22),
+        3px 9px 19px -15px rgba(75, 49, 34, .6);
+      transition: box-shadow .22s ease;
+    }
+
+    .portrait-picture:hover {
+      box-shadow:
+        0 0 0 2px rgba(251, 243, 226, .9),
+        0 0 0 4px rgba(143, 111, 79, .42),
+        0 9px 24px -13px rgba(75, 49, 34, .42);
+    }
+
+    .portrait-picture img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center 22%;
+      border-radius: 50%;
+      filter: sepia(.77) saturate(.55) contrast(.91) brightness(1.04);
+    }
+
+    .portrait-card figcaption {
+      margin-top: 12px;
+      font-size: clamp(15px, 1.12vw, 18px);
+      line-height: 1.3;
+    }
+
+    .portrait-card figcaption a {
+      color: var(--ink);
+      text-decoration: none;
+      text-underline-offset: 4px;
+    }
+    .portrait-card figcaption a:hover { color: var(--accent); text-decoration: underline; }
+    .portrait-detail {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* Only the Geisel / Leaf slide displays two slightly overlapping ovals. */
+    .portrait-group--duo .portrait-card { z-index: 1; }
+    .portrait-group--duo .portrait-card:first-child { z-index: 2; }
+    .portrait-group--duo .portrait-card + .portrait-card { margin-left: -25px; }
+    .portrait-group--duo .portrait-picture {
+      width: clamp(156px, 12vw, 205px);
+      height: clamp(210px, 15vw, 257px);
+    }
+
+    /* Signatures stand alone; never attach a signature to someone else's image. */
+    .portrait-card--signature .portrait-picture {
+      width: clamp(215px, 19vw, 290px);
+      height: 186px;
+      padding: 22px;
+      background: radial-gradient(ellipse at 38% 30%, #f7edde, #e4d2b8 86%);
+    }
+    .portrait-card--signature .portrait-picture img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 110px;
+      object-fit: contain;
+      border-radius: 0;
+      filter: sepia(.6) saturate(.5) contrast(.83);
+    }
+    /* The lithographic detail is tiny: keep it smaller than its natural size. */
+    .portrait-card--schutz .portrait-picture img {
+      max-width: 156px;
+      max-height: 45px;
+      filter: sepia(.57) saturate(.55) contrast(.84) blur(.15px);
+    }
+
+    .intro-note {
+      max-width: 100%;
+      margin: 15px 0 24px;
+      padding: 0;
+      border: 0;
+      color: var(--muted);
+      font-family: 'Times New Roman', Georgia, serif;
+      font-size: clamp(15px, 1.12vw, 18px);
+      font-style: italic;
+      line-height: 1.5;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+
+    .gallery { min-width: 0; }
+
+    /* Artwork and caption become a single, softly raised archival mount.
+       Its inner artwork recess complements the raised oval portraits. */
+    .gallery-mount {
+      margin: 0;
+      padding: 16px 16px 0;
+      background: #e7dcc9;
+      border: 1px solid #cdbda7;
+      box-shadow:
+        inset 1px 1px 0 rgba(255, 252, 243, .76),
+        inset -1px -1px 0 rgba(82, 59, 41, .09),
+        0 19px 32px -26px rgba(64, 45, 30, .46),
+        0 3px 9px rgba(64, 45, 30, .07);
+    }
 
     .gallery-header {
       display: flex;
@@ -126,15 +279,17 @@
       color: var(--muted);
     }
 
-    .gallery-number { font-variant-numeric: tabular-nums; }
+    .gallery-number { font-variant-numeric: tabular-nums; white-space: nowrap; flex-shrink: 0; }
 
     .gallery-art {
       position: relative;
       overflow: hidden;
       height: clamp(340px, 43vw, 510px);
-      background: #e7dcc9;
-      border: 1px solid #d0c3b0;
-      box-shadow: 0 19px 36px -29px rgba(65, 47, 33, .45), 0 2px 8px rgba(65, 47, 33, .09);
+      background: #e3d6c2;
+      border: 1px solid #cbbba4;
+      box-shadow:
+        inset 2px 2px 6px rgba(69, 48, 30, .16),
+        inset -1px -1px 3px rgba(255, 252, 243, .48);
     }
 
     .gallery-art::after {
@@ -191,10 +346,11 @@
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: end;
       gap: 18px;
-      min-height: 115px;
-      padding-top: 20px;
-      border-bottom: 1px solid var(--rule);
-      padding-bottom: 19px;
+      min-height: 104px;
+      padding: 20px 6px 22px;
+      /* No separate caption underline: it belongs inside the mount. */
+      border: 0;
+      background: transparent;
     }
 
     .artwork-title a { color: inherit; text-decoration: none; }
@@ -254,28 +410,50 @@
 
     footer p { margin: 0; }
 
+    .portrait-provenance {
+      margin-top: 6px;
+      max-width: 330px;
+    }
+    .portrait-provenance summary { cursor: pointer; color: var(--accent); }
+    .portrait-provenance a { color: var(--accent); }
+    .portrait-provenance ul { margin: 7px 0 0; padding-left: 18px; }
+    .portrait-provenance li { margin: 3px 0; }
+
+
     @media (max-width: 790px) {
       .page { width: min(620px, calc(100% - 36px)); }
       .masthead { padding-top: 22px; }
       .hero { grid-template-columns: 1fr; min-height: auto; gap: 44px; padding: 58px 0 30px; }
       h1 { font-size: clamp(68px, 16vw, 100px); margin-top: 18px; }
       .intro-line { max-width: 570px; }
-      .intro-note { margin-top: 25px; }
-      .intro-note {white-space: normal; }
+      .portrait-stage { min-height: 295px; margin-top: 22px; }
+      .portrait-picture { width: 190px; height: 240px; }
+      .portrait-group--duo .portrait-picture { width: 165px; height: 213px; }
+      .portrait-card--signature .portrait-picture { height: 158px; }
+      .intro-note { margin: 19px auto 10px; white-space: normal; }
       .gallery-art { height: clamp(290px, 73vw, 480px); }
+      .gallery-mount { padding: 12px 12px 0; }
       footer { flex-direction: column; gap: 6px; }
     }
 
     @media (max-width: 420px) {
+      .portrait-stage { min-height: 270px; }
+      .portrait-picture { width: 170px; height: 216px; }
+      .portrait-group--duo .portrait-picture { width: 146px; height: 190px; }
+      .portrait-group--duo .portrait-card + .portrait-card { margin-left: -18px; }
+      .portrait-card figcaption { font-size: 14px; }
+      .portrait-card--signature .portrait-picture { width: 230px; height: 145px; }
       .gallery-bottom { grid-template-columns: 1fr; gap: 16px; }
       .controls { justify-self: start; }
       .gallery-art img { padding: 10px; }
+      .gallery-mount { padding: 9px 9px 0; }
+      .gallery-bottom { padding: 16px 4px 18px; }
     }
 
     /* Accommodate OS disabled motion. */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .gallery-art img { transition: none; }
+      .gallery-art img, .portrait-layer { transition: none; }
     }
   </style>
 </head>
@@ -292,16 +470,32 @@
           
           <h1 id="intro-heading">Mário, Brussels<span class="punctuation">:</span></h1>
           <p class="intro-line">Generalist from a non-scientific background, <br> chasing data design choices with a lasting social impact</p>
+          <!-- Present even without JavaScript; other portraits are created from the slides array. -->
+          <div class="portrait-stage" aria-label="Person associated with the current visualisation">
+            <div id="portrait-one" class="portrait-layer is-visible" aria-hidden="false">
+              <div class="portrait-group">
+                <figure class="portrait-card">
+                  <a class="portrait-picture" href="https://en.wikipedia.org/wiki/John_Snow_(physician)" target="_blank" rel="noopener noreferrer" aria-label="Read about John Snow">
+                    <img src="images/snow-portrait.jpg" alt="Historical portrait of John Snow">
+                  </a>
+                  <figcaption><a href="https://en.wikipedia.org/wiki/John_Snow_(physician)" target="_blank" rel="noopener noreferrer">John Snow</a></figcaption>
+                </figure>
+              </div>
+            </div>
+            <div id="portrait-two" class="portrait-layer" aria-hidden="true" inert></div>
+          </div>
+
           <p class="intro-note">Images that changed what you could see — and how you saw it.</p>
         </div>
 
-        <figure class="gallery" aria-label="Gallery of influential data visualisations">
+        <div class="gallery">
           <div class="gallery-header">
             <span>Visual histories of evidence, passion and imagination</span>
             <span class="gallery-number" id="counter">01 / 09</span>
           </div>
 
-          <div class="gallery-art">
+          <figure class="gallery-mount" aria-label="Gallery of influential data visualisations">
+            <div class="gallery-art">
             <!-- Artwork surface clickable link to its original record. -->
             <a class="artwork-link" id="artwork-link"
                href="https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg"
@@ -335,13 +529,28 @@
               <button id="next" type="button" aria-label="Next image" title="Next image">&#8594;</button>
             </nav>
           </figcaption>
-        </figure>
+          </figure>
+        </div>
       </section>
     </main>
 
     <footer>
-      <p></p>
-      <p>Image credits, rights and original-source links accompany each work.</p>
+      <details class="portrait-provenance">
+        <summary>Portrait and signature image sources</summary>
+        <ul>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:John_Snow.jpg">John Snow</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Florence_Nightingale.jpg">Florence Nightingale</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Minard-signature.png">Charles Joseph Minard</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Portrait_of_Charles_Booth,_Social_Reformer_Wellcome_M0013547.jpg">Charles Booth</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:W.E.B._Du_Bois_by_James_E._Purdy,_1907.jpg">W. E. B. Du Bois</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://circulatingnow.nlm.nih.gov/2023/07/13/revealing-data-visualizations-in-historical-collections/">V. Schütz</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Theodor_Seuss_Geisel_(01037v).jpg">Theodor Geisel</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Munro_Leaf_%26_Ferdinand_in_1937.jpg">Munro Leaf</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:Hans_Rosling,_2016_(cropped).jpg">Hans Rosling</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://commons.wikimedia.org/wiki/File:20151202_Ed_Hawkins_(scientist)_at_COP21_Paris.png">Ed Hawkins</a></li>
+        </ul>
+      </details>
+      <p>Artwork credits, rights and original-source links accompany each work.</p>
     </footer>
   </div>
 
@@ -353,6 +562,7 @@
       {
         title: "Cholera deaths around Broad Street",
         creator: "John Snow", year: "1855", collection: "Wikimedia Commons",
+        portraits: [{ name: 'John Snow', image: 'images/snow-portrait.jpg', url: 'https://en.wikipedia.org/wiki/John_Snow_(physician)' }],
         image: "images/snow-cholera-1855.jpg",
         alt: "John Snow's map of the 1854 cholera outbreak, published in 1855, marking deaths and water pumps in Soho, London",
         source: "https://commons.wikimedia.org/wiki/File:Snow-cholera-map.jpg",
@@ -361,6 +571,7 @@
       {
         title: "Causes of mortality in the Army in the East",
         creator: "Florence Nightingale", year: "1858", collection: "Wikimedia Commons",
+        portraits: [{ name: 'Florence Nightingale', image: 'images/nightingale-portrait.jpg', url: 'https://en.wikipedia.org/wiki/Florence_Nightingale' }],
         image: "images/nightingale-mortality-1858.jpg",
         alt: "Florence Nightingale's paired polar-area diagrams of causes of death during the Crimean War",
         source: "https://commons.wikimedia.org/wiki/File:Nightingale-mortality.jpg",
@@ -369,6 +580,7 @@
       {
         title: "Map of successive losses in Napoleon's Russian campaign",
         creator: "Charles Joseph Minard", year: "1869", collection: "Wikimedia Commons",
+        portraits: [{ name: 'Charles Joseph Minard', image: 'images/minard-signature.png', url: 'https://en.wikipedia.org/wiki/Charles_Joseph_Minard', kind: 'signature' }],
         image: "images/minard-russian-campaign-1869.png",
         alt: "Minard's flow map tracing Napoleon's diminishing army during the 1812 Russian campaign, showing the retreat and temperatures",
         source: "https://commons.wikimedia.org/wiki/File:Minard.png",
@@ -377,6 +589,7 @@
       {
         title: "Descriptive Map of London Poverty",
         creator: "Charles Booth and collaborators", year: "1889", collection: "Wellcome Collection",
+        portraits: [{ name: 'Charles Booth', image: 'images/booth-portrait.jpg', url: 'https://en.wikipedia.org/wiki/Charles_Booth_(social_reformer)' }],
         image: "images/booth-london-poverty-1889.jpg",
         alt: "Booth's colour-coded map of London streets according to nineteenth-century poverty classifications",
         source: "https://commons.wikimedia.org/wiki/File:Descriptive_map_of_London_poverty,_1889_Wellcome_L0074437.jpg",
@@ -385,6 +598,7 @@
       {
         title: "Professions of Atlanta University graduates",
         creator: "Atlanta University students / W. E. B. Du Bois (collector)", year: "1900", collection: "Library of Congress",
+        portraits: [{ name: 'W. E. B. Du Bois', image: 'images/du-bois-portrait.jpg', url: 'https://en.wikipedia.org/wiki/W._E._B._Du_Bois' }],
         image: "images/du-bois-atlanta-graduates-1900.jpg",
         alt: "Bilingual 1900 statistical chart with a large red-and-yellow pie diagram showing professions of Atlanta University graduates",
         source: "https://www.loc.gov/item/2005676836/",
@@ -393,6 +607,7 @@
       {
         title: "Consommation annuelle de l'eau-de-vie à 50°",
         creator: "V. Schütz (design); after Dr Koller (statistics)", year: "1929", collection: "NLM historical reference",
+        portraits: [{ name: 'V. Schütz', image: 'images/schutz-signature.png', url: 'https://circulatingnow.nlm.nih.gov/2023/07/13/revealing-data-visualizations-in-historical-collections/', detail: 'after Dr Koller', kind: 'signature', variant: 'schutz' }],
         image: "images/schutz-koller-1929.jpg",
         alt: "Swiss colour lithograph using bottles and coins to compare spirits consumption and taxation among five European countries",
         source: "https://circulatingnow.nlm.nih.gov/2023/07/13/revealing-data-visualizations-in-historical-collections/",
@@ -401,6 +616,7 @@
       {
         title: "This is Ann… she drinks your blood!",
         creator: "Theodor Geisel (illustration) / Munro Leaf (text)", year: "1943", collection: "U.S. War Department",
+        portraits: [{ name: 'Theodor Geisel', image: 'images/geisel-portrait.jpg', url: 'https://en.wikipedia.org/wiki/Dr._Seuss' }, { name: 'Munro Leaf', image: 'images/leaf-portrait.jpg', url: 'https://en.wikipedia.org/wiki/Munro_Leaf' }],
         image: "images/ann-malaria-1943.jpg",
         alt: "1943 American malaria awareness poster featuring a mosquito character and red-shaded map of global malaria distribution",
         source: "https://commons.wikimedia.org/wiki/File:This_is_Ann..._she_drinks_your_blood!.jpg",
@@ -409,6 +625,7 @@
       {
         title: "Life expectancy and income: Gapminder bubbles",
         creator: "Gapminder Foundation", year: "2023", collection: "Wikimedia Commons",
+        portraits: [{ name: 'Hans Rosling', image: 'images/rosling-portrait.jpg', url: 'https://en.wikipedia.org/wiki/Hans_Rosling' }],
         image: "images/gapminder-bubbles-2023.png",
         alt: "Gapminder's bubbles visualisation comparing countries' income and life expectancy, with bubble area for population, showing the year 2022",
         source: "https://commons.wikimedia.org/wiki/File:Gapminder_sample.png",
@@ -417,6 +634,7 @@
       {
         title: "Global warming stripes, 1850–2025",
         creator: "Ed Hawkins", year: "2026", collection: "University of Reading",
+        portraits: [{ name: 'Ed Hawkins', image: 'images/hawkins-portrait.png', url: 'https://en.wikipedia.org/wiki/Ed_Hawkins_(climatologist)' }],
         image: "images/hawkins-warming-stripes-2026.png",
         alt: "Horizontal sequence of annual warming stripes from blues in earlier decades to reds in recent decades, depicting 1850–2025",
         source: "https://commons.wikimedia.org/wiki/File:GLOBAL-STRIPES-1850-2025-hires.png",
@@ -426,6 +644,7 @@
 
     // 5. Keep track of which slide is displayed.
     const images = [document.querySelector("#image-one"), document.querySelector("#image-two")];
+    const portraitLayers = [document.querySelector("#portrait-one"), document.querySelector("#portrait-two")];
     const counter = document.querySelector("#counter");
     const title = document.querySelector("#art-title");
     const artworkLink = document.querySelector("#artwork-link");
@@ -455,6 +674,52 @@
       counter.textContent = `${String(slideIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
     }
 
+    // One linked oval (or signature), or two smaller linked ovals for collaborators.
+    // The visible names are links as well: no separate "Wikipedia" labels.
+    function renderPortraits(slide, layer) {
+      const group = document.createElement("div");
+      group.className = slide.portraits.length === 2 ? "portrait-group portrait-group--duo" : "portrait-group";
+
+      slide.portraits.forEach(person => {
+        const card = document.createElement("figure");
+        card.className = "portrait-card" + (person.kind === "signature" ? " portrait-card--signature" : "") + (person.variant === "schutz" ? " portrait-card--schutz" : "");
+
+        const picture = document.createElement("a");
+        picture.className = "portrait-picture";
+        picture.href = person.url;
+        picture.target = "_blank";
+        picture.rel = "noopener noreferrer";
+        picture.setAttribute("aria-label", `Read more about ${person.name}`);
+        const img = document.createElement("img");
+        img.src = person.image;
+        img.alt = person.kind === "signature" ? `Signature of ${person.name}` : `Portrait of ${person.name}`;
+        picture.append(img);
+
+        const caption = document.createElement("figcaption");
+        const name = document.createElement("a");
+        name.textContent = person.name;
+        name.href = person.url;
+        name.target = "_blank";
+        name.rel = "noopener noreferrer";
+        caption.append(name);
+        if (person.detail) {
+          const detail = document.createElement("span");
+          detail.className = "portrait-detail";
+          detail.textContent = person.detail;
+          caption.append(detail);
+        }
+        card.append(picture, caption);
+        group.append(card);
+      });
+      layer.replaceChildren(group);
+    }
+
+    // Begin fetching the small local portraits immediately, for smooth cross-fades.
+    slides.forEach(slide => slide.portraits.forEach(person => {
+      const preload = new Image();
+      preload.src = person.image;
+    }));
+
     // 6. Load new image, then cross-fade.
     function showSlide(nextIndex) {
       slideIndex = (nextIndex + slides.length) % slides.length;
@@ -463,6 +728,8 @@
       const incomingIndex = 1 - visibleImage;
       const incoming = images[incomingIndex];
       const outgoing = images[visibleImage];
+      const enteringPortrait = portraitLayers[incomingIndex];
+      const leavingPortrait = portraitLayers[visibleImage];
 
       fallback.hidden = true;
 
@@ -472,6 +739,13 @@
         incoming.setAttribute("aria-hidden", "false");
         outgoing.classList.remove("is-visible");
         outgoing.setAttribute("aria-hidden", "true");
+        renderPortraits(slide, enteringPortrait);
+        enteringPortrait.classList.add("is-visible");
+        enteringPortrait.removeAttribute("inert");
+        enteringPortrait.setAttribute("aria-hidden", "false");
+        leavingPortrait.classList.remove("is-visible");
+        leavingPortrait.setAttribute("inert", "");
+        leavingPortrait.setAttribute("aria-hidden", "true");
         visibleImage = incomingIndex;
         updateCaption(slide);
       };
